@@ -39,19 +39,8 @@ args = parser.parse_args()
 def new_plain_rbxmx():
     root = ET.Element(
         "roblox",
-        nsmap={
-            "xmime": "http://www.w3.org/2005/05/xmlmime",
-        },
     )
     root.set("version", "4")
-
-    external = ET.Element("External", {})
-    external.text = "null"
-    external2 = ET.Element("External", {})
-    external2.text = "nil"
-
-    root.append(external)
-    root.append(external2)
 
     return root
 
@@ -81,10 +70,6 @@ def set_name(element, obj_name):
 def give_script_properties(element, obj_name, src):
     Properties = ET.Element("Properties")
 
-    disabled = ET.Element("bool", {})
-    disabled.text = "false"
-    disabled.set("name", "Disabled")
-
     name = ET.Element("string")
     name.text = obj_name
     name.set("name", "Name")
@@ -93,14 +78,8 @@ def give_script_properties(element, obj_name, src):
     source.text = ET.CDATA(src)
     source.set("name", "Source")
 
-    content = ET.Element("Content")
-    content.set("name", "LinkedSource")
-    content.append(ET.Element("null"))
-
-    Properties.append(disabled)
     Properties.append(name)
     Properties.append(source)
-    Properties.append(content)
 
     element.append(Properties)
 
@@ -166,7 +145,7 @@ def fs_to_tree(folder, root_element):
                 continue
 
             element = new_instance(
-                "ModuleScript" if root == folder else get_instance_type_from_extension(filename),
+                get_instance_type_from_extension(filename),
                 cur_element)
             give_script_properties(
                 element,
