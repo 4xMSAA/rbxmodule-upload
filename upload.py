@@ -186,7 +186,7 @@ if (args.output):
 
 if (args.cookie):
     res = requests.get("https://www.roblox.com/game/GetCurrentUser.ashx", cookies={".ROBLOSECURITY": args.cookie})
-    if (res.status_code == 200):
+    if (res.status_code != 200):
         print(".ROBLOSECURITY Cookie is invalid")
         exit(code=-1)
     upload_to_roblox("".join(open(args.output, "r").readlines()))
