@@ -23,13 +23,14 @@ parser.add_argument(
 parser.add_argument(
     "-d",
     "--dest",
-    dest="uploadUri",
-    default="https://data.roblox.com/Data/Upload.ashx?json=1&assetid=10",
-    help="request destination - defaults to /Data/Upload.ashx?json=1&assetid=10"
+    dest="upload_uri",
+    default="https://data.roblox.com/Data/Upload.ashx?assetid=0&type=Model&ispublic=True&name=Module&allowComments=False",
+    help="request destination - defaults to https://data.roblox.com/Data/Upload.ashx?assetid=0&type=Model&ispublic=True&name=Module&allowComments=False"
 )
 parser.add_argument("-O",
                     "--output",
                     dest="output",
+                    default="out.rbxmx",
                     help="output XML file destination")
 
 args = parser.parse_args()
@@ -106,11 +107,14 @@ def give_script_properties(element, obj_name, src):
     return Properties
 
 
-def upload_to_roblox(moduleXML):
-    requests.post(args.uploadUri,
-                  data=moduleXML,
-                  headers={'Content-Type': 'application/xml'},
+def upload_to_roblox(xml_body):
+    res = requests.post(args.upload_uri,
+                  data=xml_body,
+                  headers={'Content-Type': 'application/xml, charset=utf-8', 'User-Agent': ''},
                   cookies={".ROBLOSECURITY": args.cookie})
+
+    print("Uploaded! Asset ID is:")
+    print(res.text)
 
 
 def write_output(root_element, dest):
@@ -181,4 +185,6 @@ if (args.output):
     write_output(rbxmx, args.output)
 
 if (args.cookie):
-    upload_to_roblox(str(ET.ElementTree(rbxmx)))
+    res = requests.get("https://www.roblox.com/game/GetCurrentUser.ashx", cookies={".ROBLOSECURITY": args.cookie})
+    print(res.text)
+    upload_to_roblox("".join(open(args.output, "r").readlines()))
