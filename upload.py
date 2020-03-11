@@ -113,8 +113,8 @@ def upload_to_roblox(moduleXML):
                   cookies={".ROBLOSECURITY": args.cookie})
 
 
-def write_output(dest):
-    tree = ET.ElementTree(root)
+def write_output(root_element, dest):
+    tree = ET.ElementTree(root_element)
     tree.write(dest, encoding="UTF-8")
 
 
@@ -174,8 +174,11 @@ def fs_to_tree(folder, root_element):
 
 
 
-root = new_plain_rbxmx()
-fs_to_tree(args.source, root)
+rbxmx = new_plain_rbxmx()
+fs_to_tree(args.source, rbxmx)
 
 if (args.output):
-    write_output(args.output)
+    write_output(rbxmx, args.output)
+
+if (args.cookie):
+    upload_to_roblox(str(ET.ElementTree(rbxmx)))
